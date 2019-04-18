@@ -11,15 +11,16 @@ output: html_document
 
 ```{r}
 acc <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
-names(acc)
+
 per <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
-names(per)
+
 ```
 
 ```{r}
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(readxl)
 ```
 
 #Question 1
@@ -53,7 +54,6 @@ ggplot(acc, aes(x=DRUNK_DR)) + geom_bar(stat="count", fill="steelblue") + geom_t
 ```{r}
 #load person table
 per <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
-names(per)
 
 #subset of drivers
 drivers <- per[per$PER_TYP == 1, c(29)]
@@ -97,4 +97,34 @@ accHour #Number of accidents based on hour of the day with data from the combine
 #The label code for gender report is 1 = male, 2 = female, 8 = not reported, and 9 = unknown
 accSex  #Number of accidents based on sex with data from the combined tables
 
+```
+
+#Part 3
+
+#Question 1
+
+Since we were also given county information I decided to do this on a county level. The resulting map shows that not all counties have had their accident information recorded. It appears that the most amount of crashes happen throughout southern United States with a good deal of them happening in costal areas.
+
+```{r}
+glcs <- read_xlsx("FRPP GLC United States.xlsx", skip=1)
+counties <- map_data("county")
+
+glcs$`State Code` <- as.numeric(glcs$`State Code`)
+glcs$`County Code` <- as.numeric(glcs$`County Code`)
+glcs$`City Code` <- as.numeric(glcs$`City Code`)
+accGlcs <- left_join(acc, glcs, by = c("STATE" = "State Code", "COUNTY" = "County Code", "CITY" = "City Code"))
+
+counties$region <- toupper(counties$region)
+counties$subregion <- toupper(counties$subregion)
+accident.map <- accGlcs %>% left_join(counties, by = c("State Name" = "region", "County Name" = "subregion"))
+
+ggplot(accident.map, aes(x=long, y=lat, fill=ST_CASE)) + geom_polygon(aes(group=group)) + labs(title="Accident Frequency in the United States by County", x="Longitude", y="Latitude")
+```
+
+#Question 2
+
+Using a facet wrap with month we are able to see accident history throughout the year. Turns out more crashes happen in summer, specifically in June and July, than the other seasons. I had originally thought winter would be the worst season, but even spring seems to have more crashes.
+
+```{r}
+ggplot(accident.map, aes(x=long, y=lat, fill=ST_CASE)) + geom_polygon(aes(group=group)) + labs(title="Accident Frequency in the United States by County and by Month", x="Longitude", y="Latitude") + facet_wrap(~MONTH)
 ```
