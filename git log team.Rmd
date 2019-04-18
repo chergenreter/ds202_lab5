@@ -29,3 +29,8 @@ output: html_document
 #commit to git log team.Rmd 'updated team Rmd log' - Connor Hergenreter & Danny Nguyen
 #commit to git_log_team.html 'updated team html log' - Connor Hergenreter & Danny Nguyen
 
+#commit to git log team.Rmd 'Final Push' - Connor Hergenreter & Danny Nguyen
+#commit to git log team.html 'Final Push' - COnnor Hergenreter & Danny Nguyen
+
+#commit to git log individual1.Rmd 'Final Push' - Connor Hergenreter
+#commit to git log individual1.html 'Final Push' - COnnor Hergenreter
