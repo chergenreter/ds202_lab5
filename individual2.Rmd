@@ -18,6 +18,7 @@ names(acc)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(readxl)
 ```
 #Part 1: Accident data
 
@@ -97,4 +98,33 @@ accHour #Number of accidents based on hour of the day with data from the combine
 #The label code for gender report is 1 = male, 2 = female, 8 = not reported, and 9 = unknown
 accSex  #Number of accidents based on sex with data from the combined tables
 
+```
+
+#Part 3: Connecting data and make maps
+
+#Q1: 
+It appears that the most amount of crashes happen throughout southern United States with a good deal of them happening in costal areas.
+
+```{r}
+glcs <- read_xlsx("FRPP GLC United States.xlsx", skip=1)
+counties <- map_data("county")
+
+glcs$`State Code` <- as.numeric(glcs$`State Code`)
+glcs$`County Code` <- as.numeric(glcs$`County Code`)
+glcs$`City Code` <- as.numeric(glcs$`City Code`)
+accGlcs <- left_join(acc, glcs, by = c("STATE" = "State Code", "COUNTY" = "County Code", "CITY" = "City Code"))
+
+counties$region <- toupper(counties$region)
+counties$subregion <- toupper(counties$subregion)
+accident.map <- accGlcs %>% left_join(counties, by = c("State Name" = "region", "County Name" = "subregion"))
+
+ggplot(accident.map, aes(x = long, y = lat, fill = ST_CASE)) + geom_polygon(aes(group = group)) + labs(title = "Accident Frequency in the United States by County", x = "Longitude", y = "Latitude")
+```
+
+#Q2: Can you find seasonal trends in accident occurrences in different states? Is summer or winter more dangerous? Why?
+
+More crashes happen in summer, especially in June and July, than the other seasons. Originally expected winter to be the worst season, but even spring has more crashes.
+
+```{r}
+ggplot(accident.map, aes(x = long, y = lat, fill = ST_CASE)) + geom_polygon(aes(group = group)) + labs(title = "Accident Frequency in the United States by County and by Month", x = "Longitude", y = "Latitude") + facet_wrap(~MONTH)
 ```
