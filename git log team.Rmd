@@ -7,3 +7,25 @@ output: html_document
 
 #Initial commit - Connor Hergenreter
 
+#Initial commit - Connor Hergenreter & Danny Nguyen
+
+
+#commit to git log team.Rmd 'Inital log team push'
+#commit to git_log_team.html 'Initial log html push'
+
+
+#commit to individual1.Rmd 'Pushing part 1' - Connor Hergenreter
+#commit to individual1.html 'Pushing part 1' - Connor Hergenreter
+
+
+#commit to individual2.Rmd 'individual2.Rmd file push' - Danny Nguyen
+#commit to individual2.html 'individual2.html file push' - Danny Nguyen
+
+
+#commit to team.Rmd 'updated team.Rmd' - Connor Hergenreter & Danny Nguyen
+#commit to team.html 'updated team.html' - Connor Hergenreter & Danny Nguyen
+
+
+#commit to git log team.Rmd 'updated team Rmd log' - Connor Hergenreter & Danny Nguyen
+#commit to git_log_team.html 'updated team html log' - Connor Hergenreter & Danny Nguyen
+
