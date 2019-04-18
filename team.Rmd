@@ -5,9 +5,9 @@ date: "April 17, 2019"
 output: html_document
 ---
 
-#Initial commit - Connor Hergenreter
+#Updated commit - Connor Hergenreter & Danny Nguyen
 
-#PART 1
+#PART 1: Accident data
 
 ```{r}
 acc <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/accident.csv", stringsAsFactors = FALSE)
@@ -44,4 +44,57 @@ The following chart shows the amount of drunk drivers per accident. The total co
 
 ```{r}
 ggplot(acc, aes(x=DRUNK_DR)) + geom_bar(stat="count", fill="steelblue") + geom_text(aes(label=..count..), stat="Count", position=position_stack(0.5))
+```
+
+
+#Part 2: Connecting data
+
+#Question 1: Load the person table. Identify drivers (PER_TYP == 1, see fars manual) and subset on them.
+```{r}
+#load person table
+per <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/fars2017/person.csv", stringsAsFactors = FALSE)
+names(per)
+
+#subset of drivers
+drivers <- per[per$PER_TYP == 1, c(29)]
+summary(drivers)
+
+#extra: visualization of the count of each PER_TYP.
+ggplot(per, aes(x = PER_TYP)) + geom_bar(stat = "count", fill = "turquoise") + geom_text(aes(label = ..count..), stat = "count", position = position_stack(0.5))
+```
+
+#Question 2: Join accident and driver table (work out which variable(s) to use)
+```{r}
+#the inner_join will result in joining the two tables by automatically matching up the same variables from both tables which are ("STATE", "ST_CASE", "VE_FORMS", "COUNTY", "DAY", "MONTH", "HOUR", "MINUTE", "RUR_URB", "FUNC_SYS", "HARM_EV", "MAN_COLL", "SCH_BUS")
+drivAcci <- inner_join(acc, per)
+```
+
+#Question 3: Tally the number of accidents by day of the week (DAY_WEEK), hour of the day (HOUR) and gender (SEX). Visualize the results!
+```{r}
+#total number of accidents based on Day of the Week, Hour of the Day, and Sex 
+sum(drivAcci$DAY_WEEK)
+sum(drivAcci$HOUR)
+sum(drivAcci$SEX)
+
+#Facet Grid visual of Accidents for each hour for each day of the week and divided among the different sex classifications.
+
+#The label code for gender report is 1 = male, 2 = female, 8 = not reported, and 9 = unknown
+
+#The label code for day of the week is 1 = "Sunday", 2 = "Monday", 3 = "Tuesday", 4 = "Wednesday", 5 = "Thursday", 6 = "Friday", and  7 = "Saturday"
+
+ggplot(drivAcci, aes(x = HOUR)) + geom_bar(stat = "count", fill = "turquoise") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + facet_grid(DAY_WEEK ~ SEX) + coord_cartesian(xlim = c(0, 24))
+
+#the three seperate visuals of accidents based on day of week, hour of day, and sex.
+accWeek <- ggplot(drivAcci, aes(x = DAY_WEEK)) + geom_bar(stat = "count", fill = "turquoise") + geom_text(aes(label = ..count..), stat = "count", position = position_stack(0.5)) + scale_x_discrete(limits = c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"))
+
+accHour <- ggplot(drivAcci, aes(x = HOUR)) + geom_bar(stat = "count", fill = "turquoise") + geom_text(aes(label = ..count..), stat = "count", position = position_stack(0.5)) + coord_cartesian(xlim = c(0, 24))
+
+#The label code for gender report is 1 = male, 2 = female, 8 = not reported, and 9 = unknown
+accSex <- ggplot(drivAcci, aes(x = SEX)) + geom_bar(stat = "count", fill = "turquoise") + geom_text(aes(label = ..count..), stat = "count", position = position_stack(0.5)) + facet_wrap(SEX ~ ., labeller = label_both)
+
+accWeek #Number of accidents based on day of the week with data from the combined tables
+accHour #Number of accidents based on hour of the day with data from the combined tables
+#The label code for gender report is 1 = male, 2 = female, 8 = not reported, and 9 = unknown
+accSex  #Number of accidents based on sex with data from the combined tables
+
 ```
